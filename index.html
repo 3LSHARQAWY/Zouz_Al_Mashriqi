@@ -15,10 +15,10 @@
             margin: 0;
             height: 100vh;
             width: 100%;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
         }
-        /* تنسيق زر القائمة ليكون متناسقاً مع أزرار الزووم */
+        /* تنسيق زر القائمة ليكون متناسقاً تماماً مع أزرار ArcGIS */
         
         #toggle-main-panel {
             background: white;
@@ -32,7 +32,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             font-weight: bold;
         }
         
@@ -45,7 +45,7 @@
             position: absolute;
             top: 10px;
             left: 55px;
-            /* تم إزاحته قليلاً ليفسح مجالاً للأزرار */
+            /* مسافة كافية بجانب أزرار التحكم */
             z-index: 50;
             display: flex;
             flex-direction: column;
@@ -53,9 +53,9 @@
             background: white;
             padding: 12px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
             width: 260px;
-            max-width: 45vw;
+            max-width: 80vw;
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         
@@ -73,7 +73,7 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            max-width: 40vw;
+            max-width: 45vw;
         }
         
         .search-box {
@@ -88,7 +88,7 @@
             font-weight: bold;
             border: 1px solid #ccc;
             font-size: 12px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         
         .btn-group {
@@ -154,7 +154,7 @@
         
         #info-btn {
             position: absolute;
-            bottom: 20px;
+            bottom: 25px;
             left: 20px;
             z-index: 100;
             background: #333;
@@ -164,41 +164,62 @@
             width: 45px;
             height: 45px;
             font-size: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
         }
+        /* --- تعديل نافذة الشرح لتناسب الموبايل --- */
         
         #info-modal {
             display: none;
             position: fixed;
-            z-index: 200;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: hidden;
         }
         
         .modal-content {
             background-color: white;
-            margin: 10% auto;
+            margin: 10vh auto;
             padding: 20px;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 500px;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 450px;
             text-align: right;
-            line-height: 1.6;
+            line-height: 1.7;
+            max-height: 75vh;
+            /* أقصى ارتفاع 75% من الشاشة */
+            overflow-y: auto;
+            /* يسمح بالتمرير إذا زاد النص */
+            position: relative;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
         }
         
         .close-modal {
-            color: #aaa;
+            color: #ff4444;
             float: left;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+            margin-bottom: 10px;
         }
         
         .esri-search {
             width: 100% !important;
+        }
+        
+        @media (max-width: 600px) {
+            .left-panel {
+                width: 220px;
+                left: 50px;
+            }
+            .modal-content {
+                width: 90%;
+                margin: 5vh auto;
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -211,33 +232,36 @@
     <div id="info-modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h3>📖 شرح استخدام الموقع</h3>
-            <ul>
-                <li><b>زر ☰:</b> لإخفاء أو إظهار لوحة التحكم اليسرى لتوسيع رؤية الخريطة.</li>
-                <li><b>البحث العام:</b> استخدم المربعات في اليمين للبحث عن أي مكان.</li>
-                <li><b>البحث في الطبقات:</b> الزر البنفسجي يبحث فقط في بيانات الطبقات الخاصة.</li>
-                <li><b>التحديد اليدوي:</b> فعل الزر الأخضر ثم اضغط على الخريطة.</li>
+            <h3 style="margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px;">📖 شرح استخدام النظام</h3>
+            <ul style="padding-right: 20px;">
+                <li><b>زر ☰ (أعلى اليسار):</b> لإخفاء أو إظهار لوحة التحكم الجانبية لزيادة مساحة الرؤية.</li>
+                <li><b>البداية والنهاية:</b> ابحث عن موقعك أو وجهتك باستخدام مربعات البحث.</li>
+                <li><b>البحث في الطبقات:</b> الزر البنفسجي مخصص للبحث داخل البيانات الخاصة بالخريطة فقط.</li>
+                <li><b>التحديد اليدوي 🎯:</b> فعل الزر ثم اضغط مباشرة على الخريطة لتحديد النقاط.</li>
+                <li><b>التتبع الصوتي:</b> بعد رسم المسار، اضغط "تتبع" لمحاكاة الحركة مع سماع التوجيهات.</li>
+                <li><b>مسح الخريطة:</b> زر المسح يقوم بإزالة كافة المسارات والنقاط الحالية.</li>
             </ul>
+            <p style="font-size: 11px; color: #666; text-align: center;">اضغط خارج النافذة أو على علامة X للإغلاق</p>
         </div>
     </div>
 
     <div class="left-panel" id="mainPanel">
-        <label style="font-size: 12px; font-weight: bold;">📍 البداية والنهاية:</label>
+        <label style="font-size: 12px; font-weight: bold; color: #444;">📍 محرك الملاحة:</label>
         <div id="searchStart" class="search-box"></div>
         <div id="searchEnd" class="search-box"></div>
 
         <div class="btn-group">
             <button id="manual-btn">🎯 تفعيل التحديد اليدوي</button>
-            <button id="track-btn" disabled>تتبع صوّتي</button>
-            <button id="clear-btn">مسح</button>
-            <button id="gallary">الخلفية</button>
+            <button id="track-btn" disabled>بدء التتبع الصوّتي</button>
+            <button id="clear-btn">مسح البيانات</button>
+            <button id="gallary">تغيير الخلفية</button>
         </div>
     </div>
 
     <div class="right-panel">
         <button id="toggle-layer-search">🔍 البحث في الطبقات</button>
         <div id="layer-ui">
-            <p style="font-size: 11px; margin-bottom: 5px;">البحث في حقل Name:</p>
+            <p style="font-size: 11px; margin-bottom: 5px; font-weight: bold;">البحث في حقل Name:</p>
             <div id="layerSearchBox"></div>
         </div>
     </div>
@@ -263,19 +287,16 @@
                 map: myWebMap,
                 container: "mapdiv",
                 center: [30.5, 28.5],
-                zoom: 7
+                zoom: 7,
+                ui: {
+                    components: ["zoom", "attribution"]
+                }
             });
 
-            // إعدادات زر الإظهار والإخفاء
             const mainPanel = document.getElementById("mainPanel");
             const toggleBtn = document.getElementById("toggle-main-panel");
 
-            toggleBtn.onclick = () => {
-                mainPanel.classList.toggle("hidden");
-                toggleBtn.innerText = mainPanel.classList.contains("hidden") ? "➡" : "☰";
-            };
-
-            // إضافة الزر والأدوات إلى أعلى اليسار بالترتيب
+            // إضافة الزر إلى واجهة الخريطة فوق الزووم
             myView.ui.add(toggleBtn, "top-left");
             myView.ui.add(new Home({
                 view: myView
@@ -283,6 +304,11 @@
             myView.ui.add(new Locate({
                 view: myView
             }), "top-left");
+
+            toggleBtn.onclick = () => {
+                mainPanel.classList.toggle("hidden");
+                toggleBtn.innerText = mainPanel.classList.contains("hidden") ? "➡" : "☰";
+            };
 
             let startGraphic, endGraphic, lastRouteGeometry, trackerGraphic;
             let routeDirections = [];
@@ -309,8 +335,7 @@
                 view: myView,
                 container: "layerSearchBox",
                 includeDefaultSources: false,
-                searchAllEnabled: true,
-                suggestionsEnabled: true
+                searchAllEnabled: true
             });
 
             myWebMap.when(() => {
@@ -321,11 +346,7 @@
                     exactMatch: false,
                     outFields: ["*"],
                     name: layer.title,
-                    placeholder: "ابحث في " + layer.title,
-                    getSuggestions: true,
-                    minSuggestCharacters: 1,
-                    maxSuggestions: 10,
-                    suggestionTemplate: "{Name}"
+                    placeholder: "ابحث في " + layer.title
                 })).toArray();
                 sLayer.sources = layerSources;
             });
@@ -399,6 +420,7 @@
                 this.innerText = isManualMode ? "📍 اضغط الآن على الخريطة" : "🎯 تفعيل التحديد اليدوي";
             };
 
+            // إدارة نافذة الشرح
             const modal = document.getElementById("info-modal");
             document.getElementById("info-btn").onclick = () => modal.style.display = "block";
             document.querySelector(".close-modal").onclick = () => modal.style.display = "none";
@@ -450,11 +472,8 @@
                         }
                     });
                     await new Promise(r => setTimeout(r, 45));
-                    if (i === path.length - 1) {
-                        speak("وصلت لوجهتك");
-                        alert("🏁 وصلت!");
-                    }
                 }
+                speak("وصلت لوجهتك");
                 document.getElementById("track-btn").disabled = false;
             }
 
@@ -482,9 +501,6 @@
                 sEnd.clear();
                 sLayer.clear();
                 document.getElementById("track-btn").disabled = true;
-                isManualMode = false;
-                document.getElementById("manual-btn").classList.remove("active");
-                document.getElementById("manual-btn").innerText = "🎯 تفعيل التحديد اليدوي";
                 window.speechSynthesis.cancel();
             };
         });
